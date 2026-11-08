@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - feature/player-performance
-    paths:
-      - ".github/workflows/smarttube-lite-build.yml"
 
 permissions:
   contents: read
@@ -29,7 +27,9 @@ jobs:
           java-version: "17"
 
       - name: Configurar Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
 
       - name: Instalar dependencias Android
         run: |
@@ -37,6 +37,13 @@ jobs:
             "platforms;android-34" \
             "build-tools;30.0.3" \
             "ndk;21.0.6113669"
+
+      - name: Verificar Android SDK e submodulos
+        run: |
+          test -f SharedModules/core_settings.gradle
+          test -f MediaServiceCore/core_settings.gradle
+          test -f exoplayer-amzn-2.10.6/core_settings.gradle
+          sdkmanager --list_installed
 
       - name: Configurar Java 11 para Gradle
         uses: actions/setup-java@v4
@@ -46,6 +53,7 @@ jobs:
 
       - name: Compilar APK de teste
         run: |
+          java -version
           chmod +x ./gradlew
           ./gradlew :smarttubetv:assembleStstableDebug \
             --no-daemon --stacktrace
