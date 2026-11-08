@@ -567,20 +567,24 @@ public class TrackSelectorManager implements TrackSelectorCallback {
             return;
         }
 
-        mTrackSelector.setParameters(mTrackSelector.buildUponParameters().setRendererDisabled(rendererIndex, renderer.isDisabled));
+        DefaultTrackSelector.ParametersBuilder parametersBuilder =
+                mTrackSelector.buildUponParameters()
+                        .setRendererDisabled(rendererIndex, renderer.isDisabled);
 
         MediaTrack selectedTrack = renderer.selectedTrack;
 
         if (selectedTrack != null && selectedTrack.groupIndex != -1) {
             Log.d(TAG, "Setting override for renderer %s, group %s, track %s...", rendererIndex, selectedTrack.groupIndex, selectedTrack.trackIndex);
 
-            mTrackSelector.setParameters(mTrackSelector.buildUponParameters().setSelectionOverride(
+            parametersBuilder.setSelectionOverride(
                     rendererIndex, renderer.trackGroups, new SelectionOverride(selectedTrack.groupIndex, selectedTrack.trackIndex)
-            ));
+            );
         } else {
             Log.e(TAG, "Something went wrong. Selected track not found for renderer=%s", rendererIndex);
-            mTrackSelector.setParameters(mTrackSelector.buildUponParameters().clearSelectionOverrides(rendererIndex)); // Auto quality button selected
+            parametersBuilder.clearSelectionOverrides(rendererIndex); // Auto quality button selected
         }
+
+        mTrackSelector.setParameters(parametersBuilder);
     }
 
     private MediaTrack createAutoSelection(int rendererIndex) {
