@@ -22,11 +22,11 @@ jobs:
           submodules: recursive
           persist-credentials: false
 
-      - name: Configurar Java 11
+      - name: Configurar Java 17 para Android SDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "11"
+          java-version: "17"
 
       - name: Configurar Android SDK
         uses: android-actions/setup-android@v3
@@ -37,6 +37,12 @@ jobs:
             "platforms;android-34" \
             "build-tools;30.0.3" \
             "ndk;21.0.6113669"
+
+      - name: Configurar Java 11 para Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
 
       - name: Compilar APK de teste
         run: |
